@@ -1,0 +1,51 @@
+name: Debug Electron Builder on Windows
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  debug-windows:
+    runs-on: windows-2022
+    name: Debug electron-builder / app-builder
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Print environment (selected)
+        shell: pwsh
+        run: |
+          Write-Host "Node: $(node -v)"
+          Write-Host "Npm: $(npm -v)"
+          Write-Host "PWD: $PWD"
+          Write-Host "List app-builder-bin folder:"
+          Get-ChildItem -Path .\node_modules\app-builder-bin -Recurse | Select-Object -First 50 | Format-List
+
+      - name: Try app-builder.exe --version
+        shell: pwsh
+        run: |
+          $exePath = Join-Path $PWD 'node_modules\app-builder-bin\win\x64\app-builder.exe'
+          Write-Host "Trying to run: $exePath"
+          if (Test-Path $exePath) {
+            & $exePath --version
+          } else {
+            Write-Error "app-builder.exe not found at $exePath"
+            exit 1
+          }
+
+      - name: Try a directory build (no signing)
+        shell: pwsh
+        env:
+          WIN_CSC_LINK: ''
+          CSC_LINK: ''
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        run: |
+          echo "Running electron-builder --dir for debug"
+          npx electron-builder --dir
