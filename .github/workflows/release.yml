@@ -20,12 +20,24 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build Windows installer (electron-builder)
+      - name: Build Windows installer (signed if secrets provided)
+        run: |
+          echo "Deciding build mode..."
+        shell: pwsh
+
+      - name: Build (signed) - only when signing secrets are set
+        if: ${{ secrets.CSC_LINK != '' && secrets.CSC_KEY_PASSWORD != '' }}
         env:
           CSC_LINK: ${{ secrets.CSC_LINK }}
           CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
         run: |
-          echo "Building Windows artifacts..."
+          echo "Building signed Windows artifacts using provided certificate..."
+          npm run dist
+
+      - name: Build (unsigned) - when signing secrets are not provided
+        if: ${{ secrets.CSC_LINK == '' || secrets.CSC_KEY_PASSWORD == '' }}
+        run: |
+          echo "Building unsigned Windows artifacts (no signing secrets provided)..."
           npm run dist
 
       - name: List dist folder
