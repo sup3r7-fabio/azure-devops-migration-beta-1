@@ -36,10 +36,13 @@ jobs:
 
       - name: Build (unsigned) - when signing secrets are not provided
         if: ${{ secrets.CSC_LINK == '' || secrets.CSC_KEY_PASSWORD == '' }}
+        env:
+          # Clear any values that could be interpreted as certificate paths
+          WIN_CSC_LINK: ''
+          CSC_LINK: ''
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
         run: |
           echo "Building unsigned Windows artifacts (no signing secrets provided)..."
-          # Prevent auto-discovery of certificates which can cause path resolution errors on CI
-          $env:CSC_IDENTITY_AUTO_DISCOVERY = 'false'
           npm run dist
 
       - name: List dist folder
