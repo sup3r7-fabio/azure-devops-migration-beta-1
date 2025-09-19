@@ -11,7 +11,7 @@ Description: |
   ElectronSample is a minimal Electron application used as a packaging and update example.
 Installers:
   - Arch: x64
-    Url: https://example.com/downloads/ElectronSample-0.1.0-setup.exe
+    Url: https://github.com/sup3r7-fabio/azure-devops-migration-beta-1/releases/download/v0.1.0/ElectronSample-0.1.0-setup.exe
     Sha256: <SHA256_PLACEHOLDER>
     InstallerType: exe
     Scope: user
@@ -19,7 +19,7 @@ Tags:
   - electron
   - sample
   - installer
-    
+
 Homepage: https://example.com
 Commands:
   - ElectronSample: ElectronSample.exe
