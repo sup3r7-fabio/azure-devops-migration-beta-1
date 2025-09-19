@@ -1,0 +1,61 @@
+name: Build and Publish Windows Release
+
+on:
+  push:
+    tags: ['v*']
+
+jobs:
+  windows-release:
+    name: Build Windows installer and create Release
+    runs-on: windows-2022
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Windows installer (electron-builder)
+        env:
+          CSC_LINK: ${{ secrets.CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
+        run: |
+          echo "Building Windows artifacts..."
+          npm run dist
+
+      - name: List dist folder
+        run: |
+          echo "Contents of dist/"
+          dir dist
+        shell: pwsh
+
+      - name: Compute SHA256 of installer
+        id: compute_hash
+        shell: pwsh
+        run: |
+          $exe = Get-ChildItem -Path dist -Filter *.exe | Select-Object -First 1
+          if (-not $exe) { Write-Error "No .exe found in dist/"; exit 1 }
+          $hash = (Get-FileHash $exe.FullName -Algorithm SHA256).Hash
+          echo "Found installer: $($exe.FullName)"
+          echo "sha256=$hash" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+          Write-Host "SHA256: $hash"
+
+      - name: Create GitHub Release and upload artifacts
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          files: |
+            dist/*.exe
+            dist/latest.yml
+
+      - name: Post-release notes
+        run: |
+          echo "Release created. Installer SHA256: ${{ steps.compute_hash.outputs.sha256 }}"
+          echo "Update winget/manifest.yaml Sha256 field with that value and ensure the Url points to the release asset."
+        shell: pwsh
