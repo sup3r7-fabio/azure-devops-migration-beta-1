@@ -1,0 +1,25 @@
+Id: com.example.electronsample
+Name: ElectronSample
+Publisher: Example Corp
+Version: 0.1.0
+Moniker: electronsample
+Channel: stable
+License: MIT
+LicenseUrl: https://example.com/license
+ShortDescription: A minimal Electron sample application (example manifest).
+Description: |
+  ElectronSample is a minimal Electron application used as a packaging and update example.
+Installers:
+  - Arch: x64
+    Url: https://example.com/downloads/ElectronSample-0.1.0-setup.exe
+    Sha256: <SHA256_PLACEHOLDER>
+    InstallerType: exe
+    Scope: user
+Tags:
+  - electron
+  - sample
+  - installer
+    
+Homepage: https://example.com
+Commands:
+  - ElectronSample: ElectronSample.exe

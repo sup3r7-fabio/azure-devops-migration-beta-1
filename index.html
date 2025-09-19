@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Electron Sample App</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' data:;" />
+    <style>
+      body { font-family: Arial, sans-serif; margin: 40px; }
+    </style>
+  </head>
+  <body>
+    <h1>Electron Sample App</h1>
+    <p>This is a minimal Electron app. Use <code>npm start</code> to run.</p>
+    <pre id="versions"></pre>
+    <script>
+      const pre = document.getElementById('versions');
+      if (window.electron && window.electron.versions) {
+        pre.innerText = JSON.stringify(window.electron.versions, null, 2);
+      }
+    </script>
+  </body>
+</html>

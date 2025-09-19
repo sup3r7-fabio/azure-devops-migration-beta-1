@@ -1,0 +1,52 @@
+{
+  "name": "electron-sample-app",
+  "version": "0.1.0",
+  "description": "Minimal Electron app with packaging, signing, updates, and winget manifest samples.",
+  "author": "Example Corp <dev@example.com>",
+  "license": "MIT",
+  "main": "main.js",
+  "scripts": {
+  "start": "npx electron .",
+  "pack": "electron-builder --dir",
+  "build": "electron-builder --win --x64",
+  "dist": "electron-builder --win nsis",
+  "dist:dir": "electron-builder --dir",
+  "publish:generic": "electron-builder --publish=always",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "build": {
+    "appId": "com.example.electronsample",
+    "productName": "ElectronSample",
+    "files": [
+      "**/*"
+    ],
+    "directories": {
+      "buildResources": "build",
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowElevation": true
+    },
+    "publish": [
+      {
+        "provider": "generic",
+        "url": "https://example.com/downloads/"
+      }
+    ]
+  },
+  "dependencies": {
+    "electron-updater": "^4.6.5"
+  },
+  "devDependencies": {
+    "electron": "^26.0.0",
+    "electron-builder": "^24.6.0"
+  }
+}
